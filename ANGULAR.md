@@ -59,6 +59,25 @@
 60. [Что такое service worker и его роль в Angular?](#60-что-такое-service-worker-и-его-роль-в-angular)
 61. [Основные идеи service worker](#61-основные-идеи-service-worker)
 62. [Что такое Angular Ivy?](#62-что-такое-angular-ivy)
+63. [Какие основные фичи Angular Ivy?](#63-какие-основные-фичи-angular-ivy)
+64. [Можно ли использовать AOT с Ivy?](#64-можно-ли-использовать-aot-с-ivy)
+65. [Что такое Angular Language Service?](#65-что-такое-angular-language-service)
+66. [Как добавлять веб-воркеры в приложение?](#66-как-добавлять-веб-воркеры-в-приложение)
+67. [Какие есть ограничения веб-воркеров?](#67-какие-есть-ограничения-веб-воркеров)
+68. [Что такое Angular DSL?](#68-что-такое-angular-dsl)
+69. [Что такое subject в RxJS?](#69-что-такое-subject-в-rxjs)
+70. [Что такое Bazel?](#70-что-такое-bazel)
+71. [Что такое платформа в Angular?](#71-что-такое-платформа-в-angular)
+72. [Как можно выбрать элемент в компоненте из шаблона?](#72-как-можно-выбрать-элемент-в-компоненте-из-шаблона)
+73. [Как можно обнаружить изменения в роутере (навигация пользователя по приложению)?](#73-как-можно-обнаружить-изменения-в-роутере-навигация-пользователя-по-приложению)
+74. [Как прокинуть хэдеры в `HttpClient`?](#74-как-прокинуть-хэдеры-в-httpclient)
+75. [Angular поддерживает динамический импорт?](#75-angular-поддерживает-динамический-импорт)
+76. [Для чего Workspace API?](#76-для-чего-workspace-api)
+77. [Какие способы есть для запуска change detection?](#77-какие-способы-есть-для-запуска-change-detection)
+78. [В чём причина отказа от веб-воркеров?](#78-в-чём-причина-отказа-от-веб-воркеров)
+79. [Для чего может использоваться HTTP интерсепторы?](#79-для-чего-может-использоваться-http-интерсепторы)
+80. [Можно ли использовать больше одного интерсептора?](#80-можно-ли-использовать-больше-одного-интерсептора)
+81. [Что такое Protractor?](#81-что-такое-protractor)
 
 ## 1. Что такое фреймворк Angular?
 
@@ -452,6 +471,162 @@ https://github.com/sudheerj/angular-interview-questions#what-is-angular-router
 ## 62. Что такое Angular Ivy?
 
 Это новый движок рендера для Angular. Его можно использовать с Angular 8.
+
+## 63. Какие основные фичи Angular Ivy?
+
+- Сгенерированный код легшче читать и дебажить.
+- Меньше времени на ребилд.
+- Уменьшен размер полезной нагрузки.
+- Улучшена проверка типов в шаблоне.
+
+## 64. Можно ли использовать AOT с Ivy?
+
+Да. К тому же AOT с Ivy быстрее.
+
+## 65. Что такое Angular Language Service?
+
+ЭТо способ для IDE получить дополнения, ошибки, подсказки и навигацию внутри Angular проекта. Сервис способен автоматически определять содержимое Angular проекта, проверять `tsconfig.json`, находить все шаблоны и предоставлять для проекта языковые службы.
+
+## 66. Как добавлять веб-воркеры в приложение?
+
+1. `ng generate web-worker app`
+2. Сконфигурировать проект для использования веб-воркеров
+3. Добавить `app.worker.ts` для получения сообщений
+```ts
+addEventListener('message', ({ data }) => {
+  const response = `worker response to ${data}`;
+  postMessage(response);
+});
+```
+
+4. В компонент добавить чтение воркера
+```ts
+if (typeof Worker !== 'undefined') {
+  // Create a new
+  const worker = new Worker('./app.worker', { type: 'module' });
+  worker.onmessage = ({ data }) => {
+    console.log('page got message: $\{data\}');
+  };
+  worker.postMessage('hello');
+} else {
+  // Web Workers are not supported in this environment.
+}
+```
+
+## 67. Какие есть ограничения веб-воркеров?
+
+1. Некоторые платформы или окружения (к примеру, SSR) не поддерживают веб-воркеры.
+2. Запуск Angular с веб-воркерами через `@angular/platform-webworker` пока не поддерживается в Angular CLI.
+
+## 68. Что такое Angular DSL?
+
+Angular DSL - domain-specific language. Это синтаксический сахар внутри HTML шаблонов для объявления JS элементов.
+
+Три основных элемента синтаксиса Angular DSL:
+- `()`: для аутпутов и DOM событий;
+- `[]`: для инпутов и стандартных атрибутов, когда нужно прокинуть JS код или ссылку.
+- `*`: структурные директивы.
+
+## 69. Что такое subject в RxJS?
+
+Subject - `ObservableLike` объект, который также может управлять значениями и стримами с помощью `next()` и `complete()`.
+
+## 70. Что такое Bazel?
+
+Bazel - инструмент, который может мониторить зависимости при билде. Bazel уже встроен в Angular фреймворк.
+
+## 71. Что такое платформа в Angular?
+
+Это контекст исполнения Angular приложения. По умолчанию это веб-браузер, но также это может быть и операционная система, и веб-сервер. Платформа запуска предоставляется пакетом `@angular/platform-*`, в которых поставляются разные `@angular/core` и `@angular/common`.
+
+## 72. Как можно выбрать элемент в компоненте из шаблона?
+
+Директива с ID на элемент в шаблоне (`<input #uname>`), а в компоненте уже нужно объявить свойство с декоратором `@ViewChild()`.
+
+```ts
+@ViewChild('uname') input;
+
+ngAfterViewInit() {
+  console.log(this.input.nativeElement.value);
+}
+```
+
+## 73. Как можно обнаружить изменения в роутере (навигация пользователя по приложению)?
+
+Подписаться на `Router.events`.
+
+## 74. Как прокинуть хэдеры в `HttpClient`?
+
+В метод вызова можно добавить в опции свойство `headers`.
+
+## 75. Angular поддерживает динамический импорт?
+
+- Lazy-loading через роутер.
+- Lazy-loading через получение импортов в компоненте и подключение через Low Compiler и Component Factory.
+
+## 76. Для чего Workspace API?
+
+Для упрощённого чтения и модификации `angular.json` вместо ручной модификации.
+```ts
+import { NodeJsSyncHost } from '@angular-devkit/core/node';
+import { workspaces } from '@angular-devkit/core';
+
+async function addBuildTargetOption() {
+    const host = workspaces.createWorkspaceHost(new NodeJsSyncHost());
+    const workspace = await workspaces.readWorkspace('path/to/workspace/directory/', host);
+
+    const project = workspace.projects.get('my-app');
+    if (!project) {
+      throw new Error('my-app does not exist');
+    }
+
+    const buildTarget = project.targets.get('build');
+    if (!buildTarget) {
+      throw new Error('build target does not exist');
+    }
+
+    buildTarget.options.optimization = true;
+
+    await workspaces.writeWorkspace(workspace, host);
+}
+
+addBuildTargetOption();
+```
+
+## 77. Какие способы есть для запуска change detection?
+
+- `ApplicationRef.tick()`
+- `NgZone.run()`
+- `ChangeDetectorRef.detectChanges()`
+
+## 78. В чём причина отказа от веб-воркеров?
+
+Команда Angular решила, что это не слишком хорошая практика - запускать Angular приложение в среде веб-воркера, поэтому пакеты `@angular/platform-webworker` и `@angular/platform-webworker-dynamic` сейчас являются устаревшими.
+
+## 79. Для чего может использоваться HTTP интерсепторы?
+
+- Аутентификация
+- Логгирование
+- Кэширование
+- Подмена бэкенда
+- Трансформация URL
+- Модификация хэдеров
+
+## 80. Можно ли использовать больше одного интерсептора?
+
+Да.
+
+```ts
+providers: [
+  { provide: HTTP_INTERCEPTORS, useClass: MyFirstInterceptor, multi: true },
+  { provide: HTTP_INTERCEPTORS, useClass: MySecondInterceptor, multi: true }
+],
+```
+
+## 81. Что такое Protractor?
+
+Это среда для работы с e2e-тестами в Angular среде.
+
 ## Источники
 
 - [sudheerj/angular-interview-questions](https://github.com/sudheerj/angular-interview-questions)
